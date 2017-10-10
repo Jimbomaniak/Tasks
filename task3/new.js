@@ -1,3 +1,4 @@
+// get json data
 let data = fetch('https://api.myjson.com/bins/152f9j')
   .then(response => {
     return response.json()
@@ -11,6 +12,9 @@ let postsOnPage = 9;
 let mainData;
 let sortedPosts;
 let postsToShow;
+let addPosts = postsOnPage;
+
+// main logic
 
 data.then(posts => {
   mainData = posts.data;
@@ -27,6 +31,8 @@ data.then(posts => {
   } else {
     showPosts(postsToShow);
   }
+
+// search
 
   let searchInput = document.getElementById('search');
   searchInput.addEventListener('keyup', () => {
@@ -45,7 +51,12 @@ data.then(posts => {
       mainDiv.appendChild(notFound);
     }
   });
+
+// infinity loop
+
   document.addEventListener('scroll', () => showMore(sortedPosts));
+
+// choose by tags
 
   let theParent = document.getElementById("parent-list");
   theParent.addEventListener("click", element => {
@@ -63,16 +74,24 @@ data.then(posts => {
       sortByTag(tags, mainData)
     } else {
       removeAllPosts(mainDiv);
-      sortedPosts = search(mainData, searchInput.value);
+      sortedPosts = sortPostsByDate(mainData);
+      postsToShow = sortedPosts.slice(0, postsOnPage);
       showPosts(postsToShow);
       localStorage.clear()
     }
   });
 
+// delete posts
+
   let main = document.getElementById('main');
   main.addEventListener('click', elem => {
-    deletePost(elem, mainData)
+    deletePost(elem, mainData);
+    let footer = document.getElementsByClassName('page__footer')[0];
+    if(isAppearOnScreen(footer)){
+      showMore(sortedPosts)
+    }
   })
+
 });
 
 function showPosts(posts) {
@@ -117,12 +136,12 @@ function showMore(posts) {
   let footer = document.getElementsByClassName('page__footer')[0];
   let tags = document.getElementsByClassName('chooseTag')[0];
   if (isAppearOnScreen(footer)) {
-    postsOnPage += 9;
-    postsToShow = posts.slice(0, postsOnPage);
+    addPosts += postsOnPage;
+    postsToShow = posts.slice(0, addPosts);
     removeAllPosts(mainDiv);
     showPosts(postsToShow);
   } else if (isAppearOnScreen(tags)){
-    postsOnPage = 9;
+    addPosts = 9;
   }
 }
 
@@ -137,52 +156,55 @@ function isAppearOnScreen(elem) {
   );
 }
 
+// function for creating single post
+
 let itemCreate = item => {
-  const itemDiv = document.createElement('div');
-  itemDiv.className = 'news__item';
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'news__item';
 
-  const image = document.createElement('img');
-  image.src = item.image;
-  image.alt = 'image';
+    const image = document.createElement('img');
+    image.src = item.image;
+    image.alt = 'image';
 
-  const title = document.createElement('h4');
-  title.innerHTML = item.title;
+    const title = document.createElement('h4');
+    title.innerHTML = item.title;
 
-  const description = document.createElement('p');
-  description.innerHTML = item.description;
+    const description = document.createElement('p');
+    description.innerHTML = item.description;
 
-  const createdAt = document.createElement('span');
-  const date = new Date(item.createdAt);
-  createdAt.innerHTML = date.toDateString();
+    const createdAt = document.createElement('span');
+    const date = new Date(item.createdAt);
+    createdAt.innerHTML = date.toDateString();
 
-  const deleteButton = document.createElement('i');
-  deleteButton.className = 'fa fa-times';
-  itemDiv.appendChild(deleteButton);
-  itemDiv.appendChild(image);
-  itemDiv.appendChild(title);
-  itemDiv.appendChild(description);
+    const deleteButton = document.createElement('i');
+    deleteButton.className = 'fa fa-times';
+    itemDiv.appendChild(deleteButton);
+    itemDiv.appendChild(image);
+    itemDiv.appendChild(title);
+    itemDiv.appendChild(description);
 
-  const tags = document.createElement('ul');
-  for (let tagIndex = 0; tagIndex < item.tags.length; tagIndex++) {
-    const tag = document.createElement('li');
-    tag.innerHTML = item.tags[tagIndex];
-    tags.appendChild(tag);
-  }
-  itemDiv.appendChild(tags);
-  itemDiv.appendChild(createdAt);
-  return itemDiv;
+    const tags = document.createElement('ul');
+    for (let tagIndex = 0; tagIndex < item.tags.length; tagIndex++) {
+      const tag = document.createElement('li');
+      tag.innerHTML = item.tags[tagIndex];
+      tags.appendChild(tag);
+    }
+    itemDiv.appendChild(tags);
+    itemDiv.appendChild(createdAt);
+    return itemDiv;
 };
 
 function deletePost(elem, data) {
-  if (elem.target.nodeName === 'BUTTON' || elem.target.nodeName === 'I') {
-    elem.target.parentNode.style = 'display: none';
+  if (elem.target.nodeName === 'I') {
+    let main = document.getElementById('main');
+    main.removeChild(elem.target.parentNode);
     let title = elem.target.parentNode.childNodes[2].innerText;
     let findPost = data.filter(post => post.title === title);
     let postIndex = data.indexOf(findPost[0]);
-    delete mainData[postIndex];
+    data.splice(postIndex, 1);
+    sortedPosts.splice(postIndex, 1);
   }
 }
-
 
 function tagsContain(choosedTags, tags) {
   let res;
