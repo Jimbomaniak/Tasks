@@ -1,9 +1,9 @@
 // get json data
 let data = fetch('https://api.myjson.com/bins/152f9j')
-  .then(response => {
+  .then((response) => {
     return response.json()
   })
-  .catch(err => {
+  .catch((err) => {
     console.log(err)
   });
 
@@ -16,7 +16,7 @@ let addPosts = postsOnPage;
 
 // main logic
 
-data.then(posts => {
+data.then((posts) => {
   mainData = posts.data;
   sortedPosts = sortPostsByDate(mainData);
   postsToShow = sortedPosts.slice(0, postsOnPage);
@@ -59,7 +59,7 @@ data.then(posts => {
 // choose by tags
 
   let theParent = document.getElementById("parent-list");
-  theParent.addEventListener("click", element => {
+  theParent.addEventListener("click", (element) => {
     let target = element.target;
     if(target.tagName === "LI") {
       target.classList.toggle("checked");
@@ -84,7 +84,7 @@ data.then(posts => {
 // delete posts
 
   let main = document.getElementById('main');
-  main.addEventListener('click', elem => {
+  main.addEventListener('click', (elem) => {
     deletePost(elem, mainData);
     let footer = document.getElementsByClassName('page__footer')[0];
     if(isAppearOnScreen(footer)){
@@ -95,7 +95,7 @@ data.then(posts => {
 });
 
 function showPosts(posts) {
-  for (post of posts) {
+  for (let post of posts) {
     mainDiv.appendChild(itemCreate(post));
   }
 }
@@ -107,7 +107,7 @@ function removeAllPosts(parent) {
 }
 
 function sortByTag(choosedTags, data) {
-    sortedPosts = data.filter(post => tagsContain(choosedTags, post.tags));
+    sortedPosts = data.filter((post) => tagsContain(choosedTags, post.tags));
     removeAllPosts(mainDiv);
     if (sortedPosts.length) {
       let postsToShow = sortedPosts.slice(0, postsOnPage);
@@ -129,7 +129,7 @@ function sortByDate(post1, post2) {
 
 function search(data, text) {
   let regular = new RegExp(text, 'i');
-  return data.filter(post => post.title.search(regular) !== -1);
+  return data.filter((post) => post.title.search(regular) !== -1);
 }
 
 function showMore(posts) {
@@ -158,7 +158,7 @@ function isAppearOnScreen(elem) {
 
 // function for creating single post
 
-let itemCreate = item => {
+let itemCreate = (item) => {
     const itemDiv = document.createElement('div');
     itemDiv.className = 'news__item';
 
@@ -199,7 +199,7 @@ function deletePost(elem, data) {
     let main = document.getElementById('main');
     main.removeChild(elem.target.parentNode);
     let title = elem.target.parentNode.childNodes[2].innerText;
-    let findPost = data.filter(post => post.title === title);
+    let findPost = data.filter((post) => post.title === title);
     let postIndex = data.indexOf(findPost[0]);
     data.splice(postIndex, 1);
     sortedPosts.splice(postIndex, 1);
@@ -207,13 +207,9 @@ function deletePost(elem, data) {
 }
 
 function tagsContain(choosedTags, tags) {
-  let res;
-  for (tag of choosedTags) {
-    res = (tags.includes(tag)) ? true : false;
-    if (!res) {
-      return res
-    }
+  for (let tag of choosedTags) {
+    if (!tags.includes(tag)) return false;
   }
-  return res
+  return true;
 }
 
