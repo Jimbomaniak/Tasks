@@ -1,32 +1,24 @@
-let messages = [{
-    id: 1,
-    senderId: 1,
-    receiverId: 2,
-    message: {
-      date: '1508675073513',
-      text: 'Hello my friend!'
-    }
-  },{
-    id: 2,
-    senderId: 2,
-    receiverId: 1,
-    message: {
-      date: '1508675102012',
-      text: 'Hello, Oleg'
-    }
-  }
-]
+const db = require('./db');
+const ObjectID = require('mongodb').ObjectID
 
-let findMsg = id => messages.find(msg => msg.id === id);
+let getAllMsg = () => db.getDb().collection('messages').find().toArray();
 
-let idsTalkWith = id => {
-  let ids = [];
-  let msgs = messages.filter(msg => msg.senderId === id);
-  for (let msg of msgs) {
-    if (!ids.includes(msg.receiverId)) {
-      ids.push(msg.receiverId);
-    }
+let saveMsg = (msg) => db.getDb().collection('messages').insert(msg, (err) => {
+  if (err) {
+    throw err;
   }
-  return ids
+  console.log('message saved')
+})
+
+let findMsg = id => {
+  return db.getDb().collection('messages').findOne({ _id: ObjectID(id)});
+};
+
+let updateMsg = (id, newMsg) => {
+  return db.getDb().collection('messages').update({_id: ObjectID(id)}, {message: newMsg});
+};
+
+let deleteMsg = id => {
+  return db.getDb().collection('messages').deleteOne({_id: ObjectID(id)});
 }
-module.exports = {messages, idsTalkWith, findMsg}
+module.exports = {getAllMsg, saveMsg, findMsg, updateMsg, deleteMsg}

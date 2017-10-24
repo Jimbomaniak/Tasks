@@ -1,31 +1,30 @@
-const users = [{
-	id: 1,
-	name: 'Nikolas',
-	email: 'nikolas@gmail.com'
-},{
-	id: 2,
-	name: 'Eduard',
-	email: 'eduard@gmail.com'
-},{
-	id: 3,
-	name: 'Bohdan',
-	email: 'bohdan@gmail.com'
-},{
-	id: 4,
-	name: 'Dima',
-	email: 'dima@gmail.com'
-}];
+const db = require('./db');
+const ObjectID = require('mongodb').ObjectID
 
 
-let findUser = id => users.find(user => user.id === id);
-let getUsersById = ids => {
-	let usersNames = [];
-	for (let id of ids) {
-		let user = findUser(id);
-		usersNames.push(user.name);
-	}
-	return usersNames;
-}
+let getAllUsers = () => db.getDb().collection('users').find().toArray();
+
+let addUser = user => {
+	db.getDb().collection('users').insert(user, (err) => {
+		if (err) {
+			throw err;
+		}
+		console.log('User added');
+	})
+};
+
+let findUser = id => {
+  return db.getDb().collection('users').findOne({ _id: ObjectID(id)});
+};
+
+let deleteUser = id => {
+	return db.getDb().collection('users').deleteOne({ _id: ObjectID(id)}, (err) => {
+		if (err) {
+			throw err;
+		}
+	});
+};
 
 
-module.exports = {users, findUser, getUsersById}
+
+module.exports = {getAllUsers, addUser, findUser, deleteUser}

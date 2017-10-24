@@ -1,13 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const MongoClient = require('mongodb').MongoClient;
+
 
 const app = express();
+let db;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 const routes = require('./routes/routes')(app);
 
-
-const server = app.listen(3000);
-console.log('Start listening port 3000')
+app.listen(3000, () => console.log('API app started'));
