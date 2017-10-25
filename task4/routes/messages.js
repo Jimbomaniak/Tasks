@@ -11,6 +11,7 @@ router.get('/:id', (req, res) => {
   msgService.findMsg(req.params.id).then((msg) => {
     if (!msg) {
       res.status(404).send({"Not found": req.params.id});
+    }
     res.send(msg);
   });
 });

@@ -10,7 +10,7 @@ let saveMsg = (msg) => db.getDb().collection('messages').insert(msg, (err) => {
   console.log('message saved')
 })
 
-let findMsg = id => {
+let findMsg = (id) => {
   return db.getDb().collection('messages').findOne({ _id: ObjectID(id)});
 };
 
@@ -18,7 +18,15 @@ let updateMsg = (id, newMsg) => {
   return db.getDb().collection('messages').update({_id: ObjectID(id)}, {message: newMsg});
 };
 
-let deleteMsg = id => {
+let deleteMsg = (id) => {
   return db.getDb().collection('messages').deleteOne({_id: ObjectID(id)});
 }
-module.exports = {getAllMsg, saveMsg, findMsg, updateMsg, deleteMsg}
+
+
+module.exports = {
+                  getAllMsg,
+                  saveMsg,
+                  findMsg,
+                  updateMsg,
+                  deleteMsg,
+                }

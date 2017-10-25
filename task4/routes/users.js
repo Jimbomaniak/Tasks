@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const userService = require('../services/users');
-const messages = require('../services/messages');
 
 
 router.get('/', (req, res) => {
@@ -18,8 +17,18 @@ router.get('/:id', (req, res) => {
       res.status(404).send({"Not found": req.params.id});
     }
     res.send(user)
-  });
+  })
+  .catch((err) => {
+    console.log(err);
+    res.status(500).send('ERRRO');
+  })
 });
+
+router.get('/talked/:id', (req, res) => {
+  userService.getTalkedWith(req.params.id)
+  .then((users) => res.send(users))
+  })
+
 
 
 router.post('/', (req, res) => {
@@ -29,15 +38,9 @@ router.post('/', (req, res) => {
   };
   userService.addUser(user);
   res.send(user);
-  })
+});
 
 
-// router.put('/:id', (req, res) => {
-//   let user = userService.findUser(Number(req.params.id));
-//   user.name = req.body.name;
-//   user.email = req.body.email;
-//   res.sendStatus(200);
-// })
 
 router.delete('/:id', (req, res) => {
   userService.deleteUser(req.params.id);

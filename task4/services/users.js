@@ -1,6 +1,13 @@
 const db = require('./db');
 const ObjectID = require('mongodb').ObjectID
 
+let ToObjectID = (id) => {
+	try {
+		return ObjectID(id)
+	} catch(err) {
+		console.log('id must be in hex format!')
+	}
+}
 
 let getAllUsers = () => db.getDb().collection('users').find().toArray();
 
@@ -14,7 +21,8 @@ let addUser = user => {
 };
 
 let findUser = id => {
-  return db.getDb().collection('users').findOne({ _id: ObjectID(id)});
+	id = ToObjectID(id);
+  return db.getDb().collection('users').findOne({ _id: id});
 };
 
 let deleteUser = id => {
@@ -25,6 +33,15 @@ let deleteUser = id => {
 	});
 };
 
+let getTalkedWith = (id) => {
+    return db.getDb().collection('messages').find({'senderId': id}).toArray()
+		.then((msgs) => {
+        let receivers = msgs.map((msg) => ObjectID(msg.receiverId));
+        return db.getDb().collection('users').find(
+            { _id: {$in: receivers}}).toArray()
+    })
+};
 
 
-module.exports = {getAllUsers, addUser, findUser, deleteUser}
+
+module.exports = {getAllUsers, addUser, findUser, deleteUser, getTalkedWith}
