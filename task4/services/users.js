@@ -5,7 +5,7 @@ let ToObjectID = (id) => {
 	try {
 		return ObjectID(id)
 	} catch(err) {
-		console.log('id must be in hex format!')
+		throw new Error('id must be in hex format!')
 	}
 }
 
@@ -22,21 +22,21 @@ let addUser = user => {
 
 let findUser = id => {
 	id = ToObjectID(id);
-  return db.getDb().collection('users').findOne({ _id: id});
+  return db.getDb().collection('users').findOne({ _id: id})
 };
 
 let deleteUser = id => {
-	return db.getDb().collection('users').deleteOne({ _id: ObjectID(id)}, (err) => {
+	return db.getDb().collection('users').deleteOne({ _id: ToObjectID(id)}, (err) => {
 		if (err) {
 			throw err;
 		}
-	});
+	})
 };
 
 let getTalkedWith = (id) => {
     return db.getDb().collection('messages').find({'senderId': id}).toArray()
 		.then((msgs) => {
-        let receivers = msgs.map((msg) => ObjectID(msg.receiverId));
+        let receivers = msgs.map((msg) => ToObjectID(msg.receiverId));
         return db.getDb().collection('users').find(
             { _id: {$in: receivers}}).toArray()
     })

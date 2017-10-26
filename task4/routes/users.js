@@ -18,10 +18,6 @@ router.get('/:id', (req, res) => {
     }
     res.send(user)
   })
-  .catch((err) => {
-    console.log(err);
-    res.status(500).send('ERRRO');
-  })
 });
 
 router.get('/talked/:id', (req, res) => {
