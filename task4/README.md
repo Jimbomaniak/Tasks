@@ -3,6 +3,7 @@
 Route | Method | BODY | Description
 --- | :---: | :---: | ---
 `/users` | GET | - | List all users
+`/users/talked/id` | GET | - Get users talked with user
 `/users/id` | GET | - | Get user with ID (hex format)
 `/users/` | POST | {"name": "Vasya", "email" : "vasya@asf.com"} | Create new user with email
 `/users/id` | DELETE | - | Delete user with ID (hex format)
