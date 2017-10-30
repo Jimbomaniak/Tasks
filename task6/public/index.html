@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Chat</title>
+	<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+	<input type="text" id="nameInput"><button id="nameButton">Save</button>
+	<form action="">
+	  <input id="text" autocomplete="off" /><button id='textSubmit'>Send</button>
+	</form>
+	<div class="main">
+	    <div class="msgs">
+	    <ul id="messages"></ul>
+	  </div>
+	  <div id="names">
+	    <p>Users online:</p>
+	    <ul>
+	      <li id="userHeader"></li>
+	    </ul>
+	  </div>
+
+	</div>
+</body>
+<script src='../socket.io/socket.io.js'></script>
+<script src='/socket/index.js'></script>
+</html>
